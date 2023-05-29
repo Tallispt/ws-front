@@ -18,7 +18,8 @@ const colors = {
   teal700: '#285E61',
   teal800: '#234E52',
   teal900: '#1D4044',
-
+  red: '#FD3731',
+  yellow: '#FDD015',
 }
 
 export {
