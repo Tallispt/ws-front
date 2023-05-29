@@ -4,16 +4,22 @@ import { useState } from "react";
 import useSignIn from "../../hooks/api/useSignIn";
 import useUploadFile from "../../hooks/api/userUploadFile";
 import { useToast } from "@chakra-ui/react";
+import useEncode from "../../hooks/useEncode";
 
 const Body = () => {
   const { signIn } = useSignIn();
   const { upload } = useUploadFile();
+  const { encode } = useEncode()
   const toast = useToast();
   const [file, setFile] = useState()
 
-  function handleFile(event){
-    setFile(event.target.files[0])
-    console.log(event.target.files[0])
+  async function handleFile(event){
+    const newFile = event.target.files[0]
+    const base64 = await encode(newFile);
+    console.log({file: base64})
+    setFile({      
+      name: newFile.name,
+      file: base64  });
   }
 
   async function handleUpload(event){
@@ -43,7 +49,12 @@ const Body = () => {
   return(
     <BodyContainer>
         <Form onSubmit={handleUpload}>
-          <input type="file" name="file" onChange={handleFile}/>
+          <input 
+            type="file" 
+            label="Image" 
+            accept=".jpeg, .png, .jpg" 
+            name="file" 
+            onChange={handleFile}/>
           <Button type="submit">Upload</Button>
         </Form>
         
@@ -51,7 +62,7 @@ const Body = () => {
           const response = await signIn("nome", "senha")
           console.log(response)
         }}>Take picture</Button>
-        <Button>Modes</Button>
+        <Button>Settings</Button>
     </BodyContainer>
   );
 }
