@@ -1,0 +1,43 @@
+import styled from "styled-components";
+import Logo from "../Logo/Logo";
+import { colors } from "../../style/color";
+
+
+const SignPage = ({children}) => {
+
+  return(
+    <Container>
+      <FormContainer>
+        <Logo/>
+          {children}
+      </FormContainer>
+    </Container>
+  )
+}
+
+const Container = styled.div`
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(60deg, ${colors.darkMain} 4%, ${colors.main} 98%);;
+
+`
+
+const FormContainer = styled.div`
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  align-items: center;
+  padding: 4rem;
+
+  background-color: rgba(255, 255, 255, 0.2);
+  opacity: 0.9;
+  color: ${colors.white};
+  border-radius: 40px;
+  box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+`
+
+export default SignPage;
