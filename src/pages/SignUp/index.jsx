@@ -147,15 +147,15 @@ const SignUp = () => {
           marginTop={'3rem'}
           marginBottom={3}
         >Inscrever</Button>
-        <Button 
+          <Button 
+            to={'/sign-in'}
+            as={Link}
             backgroundColor={colors.teal900}
             colorScheme="gray"
             color={colors.white}
           >
-            <Link to={"/sign-in"}>
-              Já possuo conta
-            </Link>
-        </Button>
+            Já possuo conta
+          </Button>
       </Form>
     </SignPage>
   )
@@ -164,6 +164,10 @@ const SignUp = () => {
 const Form = styled.form`
     display: flex;
     flex-direction: column;
+
+    Link {
+      width: 100%;
+    }
 `
 
 export default SignUp;

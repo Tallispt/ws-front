@@ -103,13 +103,13 @@ const SignIn = () => {
           marginBottom={3}
         >Entrar</Button>
         <Button 
-            backgroundColor={colors.teal900}
-            colorScheme="gray"
-            color={colors.white}
+          to={'/sign-up'}
+          as={Link}
+          backgroundColor={colors.teal900}
+          colorScheme="gray"
+          color={colors.white}
         >
-          <Link to={"/sign-up"}>
-            Registrar-se
-          </Link>
+          Registrar-se
         </Button>
       </Form>
     </SignPage>
@@ -117,8 +117,12 @@ const SignIn = () => {
 }
 
 const Form = styled.form`
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
+
+  Link {
+    width: 100%;
+  }
 `
 
 export default SignIn;
