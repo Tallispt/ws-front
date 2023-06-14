@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { colors } from "../../style/color";
 import useSignUp from "../../hooks/api/useSignup";
-import SignPage from "../../components/Sign/SignPage";
+import SignPage from "../SignPage";
 
 const SignUp = () => {
   const [show, setShow] = useState(false)
