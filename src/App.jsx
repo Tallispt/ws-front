@@ -1,12 +1,19 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { ChakraProvider } from '@chakra-ui/react'
 
-import Main from './pages/Main'
 import SignUp from './pages/SignUp'
 import SignIn from './pages/SignIn'
+import ResultPage from './pages/Result'
+import SettingsPage from './pages/Settings'
+import UserPage from './pages/User'
+import DataPage from './pages/Data'
+import ModePage from './pages/Mode'
+
 
 import { UserProvider } from './context/userContext';
 import useToken from './hooks/useToken';
+import Header from './components/Header';
+import AnalysisPage from './pages/Analysis';
 
 function App() {
   return (
@@ -14,14 +21,27 @@ function App() {
       <UserProvider>
         <Router>
           <Routes>
+            <Route path='/' element={<SignIn/>}/>
             <Route path='/sign-in' element={<SignIn/>}/>
             <Route path='/sign-up' element={<SignUp/>}/>
             
-              <Route path='/' element={          
-              <ProtectedRouteGuard>
-                <Main/>
-              </ProtectedRouteGuard>
-              }/>
+              <Route path='/app' element={          
+              // <ProtectedRouteGuard>
+              <>
+                <Header/>
+                <Outlet/>
+              </>
+              // </ProtectedRouteGuard>
+              }>
+                {/* <Route path="welcome" element={<FillSubscription />} /> */}
+                <Route path="analysis" element={<AnalysisPage />} />
+                <Route path="result" element={<ResultPage />} />
+                <Route path="settings" element={<SettingsPage />} />
+                <Route path="user" element={<UserPage />} />
+                <Route path="data" element={<DataPage />} />
+                <Route path="mode" element={<ModePage />} />
+                <Route index path="*" element={<Navigate to="/app/analysis" />} />
+              </Route>
 
           </Routes>
         </Router>

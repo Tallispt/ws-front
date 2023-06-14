@@ -3,10 +3,10 @@ import { useState } from "react";
 
 import useSignIn from "../../hooks/api/useSignIn";
 import useUploadFile from "../../hooks/api/userUploadFile";
-import { useToast } from "@chakra-ui/react";
+import { Input, useToast } from "@chakra-ui/react";
 import useEncode from "../../hooks/useEncode";
 
-const Body = () => {
+const AnalysisPage = () => {
   const { signIn } = useSignIn();
   const { upload } = useUploadFile();
   const { encode } = useEncode()
@@ -62,6 +62,7 @@ const Body = () => {
           const response = await signIn("nome", "senha")
           console.log(response)
         }}>Take picture</Button>
+        <Input />
         <Button>Settings</Button>
     </BodyContainer>
   );
@@ -100,4 +101,4 @@ const Button = styled.button`
   }
 `
 
-export default Body;
+export default AnalysisPage;
