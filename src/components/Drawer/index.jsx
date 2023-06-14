@@ -1,8 +1,8 @@
-import { useContext } from "react"
+// import { useContext } from "react"
+// import UserContext from "../../context/userContext"
 import { Link } from "react-router-dom";
 import styled from "styled-components"
-import UserContext from "../../context/userContext"
-import {IoPlanetOutline, IoCameraOutline, IoStatsChartOutline, IoOptionsOutline} from "react-icons/io5"
+import {IoPlanetOutline, IoCameraOutline, IoStatsChartOutline, IoOptionsOutline, IoEyedropOutline} from "react-icons/io5"
 import { Drawer, DrawerOverlay, DrawerContent} from '@chakra-ui/react'
 import { colors } from "../../style/color";
 
@@ -10,23 +10,35 @@ const Pages = [
   {
     name: "Analysis",
     icon: IoCameraOutline,
-    route: "/"
+    route: "analysis"
   },
   {
-    name: "Result",
+    name: "Results",
     icon: IoStatsChartOutline,
-    route: ""
+    route: "result"
+  },
+  {
+    name: "Mode",
+    icon: IoEyedropOutline,
+    route: "mode"
   },
   {
     name: "Settings",
     icon: IoOptionsOutline,
-    route: ""
+    route: "settings"
   },
 ]
 
+function toggleOnDiffPage(pageRoute, pathName, onClose) {
+  if(pageRoute !== pathName) {
+    onClose()
+  }
+}
+
 const SideMenu = ({...props}) => {
   
-  const { userData } = useContext(UserContext);
+  // const { userData } = useContext(UserContext);
+  const pathName = window.location.pathname.replace('/app/', '')
 
   return(
     <Drawer
@@ -36,19 +48,29 @@ const SideMenu = ({...props}) => {
     >
       <DrawerOverlay />
       <Content>
-        <DrawerTitle>
+        <DrawerTitle 
+        to={'user'}
+        pathName={pathName}
+        onClick={() => {toggleOnDiffPage('user', pathName, props.onClose)}}>
+          {/* TODO Trasformar em div para abrigar imagem do usuário */}
           <div>
             <IoPlanetOutline size={'2rem'}/> 
           </div>
+          {/* TODO Abrigar nome do usuário vindo do Context */}
           <p>Username</p>
           {/* {userData.username} */}
         </DrawerTitle>
         <Divider />
         <DrawerBody>
-          {Pages.map((item, index) => {return(
-          <MenuItem key={index} to={item.route}>
-            <item.icon size={'2rem'}/>
-            <p> {item.name} </p>
+          {Pages.map((page, i) => {return(
+          <MenuItem
+            key={i}
+            to={page.route}
+            pathName={pathName}
+            onClick={() => {toggleOnDiffPage(page.route, pathName, props.onClose)}}
+            >
+            <page.icon size={'2rem'}/>
+            <p> {page.name} </p>
           </MenuItem>
           )})}
         </DrawerBody>
@@ -62,7 +84,7 @@ const Content = styled(DrawerContent)`
   padding: 0 1.5rem;
 `
 
-const DrawerTitle = styled.div`
+const DrawerTitle = styled(Link)`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -88,7 +110,7 @@ const DrawerTitle = styled.div`
 
   &:hover {
     cursor: pointer;
-    opacity: 0.8;
+    opacity: ${props => props.pathName !== props.to ? 0.8 : 1};
   }
 `
 
@@ -109,7 +131,7 @@ const MenuItem = styled(Link)`
   display: flex;
   align-items: center;
   gap: 1rem;
-  opacity: 0.6;
+  opacity: ${props => props.pathName !== props.to ? 0.6 : 1};
 
   p {
     font-weight: 500;
