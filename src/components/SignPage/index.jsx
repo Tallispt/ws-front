@@ -1,6 +1,7 @@
 import styled from "styled-components";
-import Logo from "../Logo/Logo";
+import Logo from "../../components/Logo";
 import { colors } from "../../style/color";
+import { themes } from "../../style/themes";
 
 
 const SignPage = ({children}) => {
@@ -8,7 +9,7 @@ const SignPage = ({children}) => {
   return(
     <Container>
       <FormContainer>
-        <Logo/>
+        <Logo theme={themes.light}/>
           {children}
       </FormContainer>
     </Container>

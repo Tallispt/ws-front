@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import styled from "styled-components";
 import { Input, InputGroup, InputRightElement, Button, useToast } from '@chakra-ui/react'
 import { RiEye2Line, RiEyeCloseLine } from 'react-icons/ri'
@@ -6,9 +6,12 @@ import { RiEye2Line, RiEyeCloseLine } from 'react-icons/ri'
 import { colors } from "../../style/color";
 import { Link, useNavigate } from "react-router-dom";
 import useSignIn from "../../hooks/api/useSignIn";
-import SignPage from "../../components/Sign/SignPage";
+import SignPage from "../SignPage";
+import UserContext from "../../context/userContext";
 
 const SignIn = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [show, setShow] = useState(false)
   const handleClick = () => setShow(!show)
 
@@ -16,15 +19,15 @@ const SignIn = () => {
   const navigate = useNavigate();
   const { signIn} = useSignIn();
 
-  const [username, setUsername] = useState('');
-
-  const [password, setPassword] = useState('');
+  const { setUserData } = useContext(UserContext);
 
   async function submit(event) {
     event.preventDefault();
 
       try {
-        await signIn(username, password)
+        const userData = await signIn(username, password)
+        console.log(userData)
+        setUserData(userData)
         toast({
           title: 'Login realizado com sucesso',
           position: 'top-left',
