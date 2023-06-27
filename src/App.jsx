@@ -14,10 +14,11 @@ import { UserProvider } from './context/userContext';
 import useToken from './hooks/useToken';
 import Header from './components/Header';
 import AnalysisPage from './pages/Analysis';
+import { ChakraThemes } from './style/themes';
 
 function App() {
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={ChakraThemes}>
       <UserProvider>
         <Router>
           <Routes>
