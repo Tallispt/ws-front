@@ -5,6 +5,7 @@ import styled from "styled-components"
 import {IoPlanetOutline, IoCameraOutline, IoStatsChartOutline, IoOptionsOutline, IoEyedropOutline} from "react-icons/io5"
 import { Drawer, DrawerOverlay, DrawerContent} from '@chakra-ui/react'
 import { colors } from "../../style/color";
+import Divider from "../Divider";
 
 const Pages = [
   {
@@ -62,7 +63,7 @@ const SideMenu = ({...props}) => {
         </DrawerTitle>
         <Divider />
         <DrawerBody>
-          {Pages.map((page, i) => {return(
+          {Pages.map((page, i) => (
           <MenuItem
             key={i}
             to={page.route}
@@ -72,7 +73,7 @@ const SideMenu = ({...props}) => {
             <page.icon size={'2rem'}/>
             <p> {page.name} </p>
           </MenuItem>
-          )})}
+          ))}
         </DrawerBody>
       </Content>
     </Drawer>
@@ -112,12 +113,6 @@ const DrawerTitle = styled(Link)`
     cursor: pointer;
     opacity: ${props => props.pathName !== props.to ? 0.8 : 1};
   }
-`
-
-const Divider = styled.div`
-  background-color: ${colors.gray};
-  width: 100%;
-  height: 0.125rem;
 `
 
 const DrawerBody = styled.div`
