@@ -1,7 +1,10 @@
 import api from './api';
 
 async function signIn(username, password) {
+  console.log(username)
   const response = await api.post('/sign-in', { username, password });
+  console.log(response.data)
+  console.log(response.status)
   return response.data;
 }
 
