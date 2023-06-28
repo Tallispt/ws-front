@@ -1,35 +1,15 @@
-import { useState } from 'react';
 import { IoCameraOutline, IoPushOutline } from 'react-icons/io5';
 import { Box, Button, useDisclosure } from '@chakra-ui/react'
 import styled from 'styled-components';
 
 import { colors } from '../../style/color';
 import Divider from '../../components/Divider';
-import Modal from '../../components/Modal';
-import UploadModal from './UploadChild';
-import CameraModal from './CameraChild';
+import CameraModal from './CameraModal';
+import UploadInput from './UploadInput';
 
 const MainPanel = ({disabled}) => {
 
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const [modalElement, setModalElement] = useState()
-
-  function handleOpenModal(e) {
-    const value = e.target.value
-
-    switch(value) {
-      case 'camera' :
-        setModalElement(CameraModal)
-        break
-      case 'upload':
-        setModalElement(UploadModal)
-        break
-      default:
-        setModalElement(<>Error</>)
-        break
-    }
-    onOpen()
-  }
+  const {isOpen, onOpen, onClose} = useDisclosure()
 
   return(
     <Container disabled={disabled}>
@@ -40,7 +20,6 @@ const MainPanel = ({disabled}) => {
           <Title>Create your detaction</Title>
         </TitleContainer>
         <Button 
-        value={'camera'}
         color={colors.black} 
         backgroundColor={colors.white}
         isDisabled={disabled}
@@ -50,7 +29,7 @@ const MainPanel = ({disabled}) => {
           bg: colors.gray,
           color: colors.gray400
         }}
-        onClick={(e) => handleOpenModal(e)}
+        onClick={onOpen}
         >
           Open camera
         </Button>
@@ -66,24 +45,10 @@ const MainPanel = ({disabled}) => {
             <SubTitle>.jpeg .jpg .png</SubTitle>
           </div>
         </TitleContainer>
-        <Button 
-        value={'upload'}
-        color={colors.black} 
-        backgroundColor={colors.white}
-        isDisabled={disabled}
-        isActive={disabled}
-        _hover={!disabled ? null : {brightness: 0.1}}
-        _disabled={{
-          bg: colors.gray,
-          color: colors.gray400
-        }}
-        onClick={(e) => handleOpenModal(e)}
-        >
-          Upload File
-        </Button>
+        <UploadInput disabled={disabled} />
       </Content>
 
-      <Modal isOpen={isOpen} onClose={onClose} children={modalElement}/>
+      <CameraModal isOpen={isOpen} onClose={onClose}/>
     </Container>
   )
 }
