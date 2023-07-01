@@ -42,7 +42,7 @@ const AnalysisPage = () => {
         <TabPanels >
         {PageTabs.map((item, index) => (
             <TabPanel key={index}>
-              <Panel type={item}/>
+              <Panel type={item.type}/>
             </TabPanel>
             ))}
         </TabPanels>
@@ -54,6 +54,7 @@ const AnalysisPage = () => {
 const BodyContainer = styled.div`
   display: flex;
   justify-content: center;
+  /* margin-top: 5rem; */
 `
 
 export default AnalysisPage;

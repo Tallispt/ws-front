@@ -4,7 +4,7 @@ import { colors } from "../../style/color";
 import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton } from '@chakra-ui/react'
 import styled from "styled-components";
 
-const CameraModal = ({isOpen, onClose}) => {
+const CameraModal = ({isOpen, onClose, value, images, setImages}) => {
 
   const webcamRef = useRef(null)
   const [url, setUrl] = useState(null)
@@ -15,10 +15,13 @@ const CameraModal = ({isOpen, onClose}) => {
     facingMode: "user"
  }
 
-  const capturePhoto = useCallback(async () => {
+  const capturePhoto = useCallback(() => {
     const imgSrc = webcamRef.current.getScreenshot()
     setUrl(imgSrc)
-  }, [webcamRef])
+    setImages(prevImage => prevImage ? (
+      [...prevImage, {data: imgSrc, name: webcamRef.current.stream.id}]) : 
+      [{data: imgSrc, name: webcamRef.current.stream.id}])
+  }, [webcamRef, setImages])
 
   return(
     <Modal 

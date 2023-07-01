@@ -32,6 +32,7 @@ const HeaderContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 0 3rem;
+  width: 100vw;
 
   svg:hover {
     cursor: pointer;
