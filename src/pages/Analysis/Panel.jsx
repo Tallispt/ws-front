@@ -1,40 +1,97 @@
-import { Button, Select } from '@chakra-ui/react'
+import { Select } from '@chakra-ui/react'
 import styled from 'styled-components';
 import MainPanel from './MainPanel';
-import { useState } from 'react';
-import { colors } from '../../style/color';
+import { useEffect, useState } from 'react';
 
 const SelectOptions = [
   {
     id: 1,
-    name: 'option1',
-    title: 'Option 1'
+    userId: '',
+    name: 'deafult',
+    title: 'Default Option',
+    type: 'model', 
+    config: {
+      regressionId: '',
+      regressionName: 'default',
+      xCoordLable: 'pH',
+      xValues: [4, 5, 6, 7, 8, 9],
+      yCoordLable: 'Color value',
+      yValues: []
+    }
   },
   {
     id: 2,
-    name: 'option2',
-    title: 'Option 2'
+    userId: '',
+    name: 'regression1',
+    title: 'Regression 1',
+    type: 'regression', 
+    config: {
+      regressionName: 'default',
+      xCoordLable: 'pH',
+      xValues: [4, 5, 6, 7, 8, 9],
+      yCoordLable: 'Color value',
+      yValues: [],
+      replicatesNum: 3,
+      delta: true,
+      rgb: true,
+      cmyk: true,
+      hsv: true,
+      Euclidian: true,
+    }
   },
   {
     id: 3,
-    name: 'option3',
-    title: 'Option 3'
+    userId: '',
+    name: 'regression2',
+    title: 'Regression 2',
+    type: 'regression', 
+    config: {
+      regressionName: 'default',
+      xCoordLable: 'pH',
+      xValues: [4, 5, 6, 7, 8, 9],
+      yCoordLable: 'Color value',
+      yValues: [],
+      replicatesNum: 3,
+      delta: true,
+      rgb: true,
+      cmyk: true,
+      hsv: true,
+      Euclidian: true,
+    }
   },
   {
     id: 4,
-    name: 'option4',
-    title: 'Option 4'
+    userId: '',
+    name: 'model1',
+    title: 'Model 1',
+    type: 'model', 
+    config: {
+      regressionId: '',
+      regressionName: 'default',
+      xCoordLable: 'pH',
+      xValues: [4, 5, 6, 7, 8, 9],
+      yCoordLable: 'Color value',
+      yValues: []
+    }
   },
 ]
 
 const Panel = ({type}) => {
 
+  useEffect(() => {
+    setOptions(() => SelectOptions.filter(item => item.type === type))
+  }, [type])
+
   const [value, setValue] = useState()
   const [disabled, setDisabled] = useState(true)
+  const [options, setOptions] = useState()
+  // const { upload } = useUploadFile();
 
   function handleSelection(e) {
     const newValue = e.target.value
-    setValue(newValue)
+    const selectedOption = options.find(item => item.name === newValue)
+
+    setValue(selectedOption)
 
     newValue ? setDisabled(false) : setDisabled(true)
   }
@@ -44,25 +101,17 @@ const Panel = ({type}) => {
       <SelectContainer>
         <Select 
         onChange={(e) => handleSelection(e)}
-        placeholder={`Choose a ${type.type}`}
-        value={value}
+        placeholder={`Choose a ${type}`}
+        value={value?.name}
         flex='7' 
         >
-          {SelectOptions.map((item) => (
+          {options?.map((item) => (
             <option key={item.id} value={item.name} >{item.title}</option>
           ))}
         </Select>
-        <Button 
-        flex='3' 
-        color={colors.white} 
-        backgroundColor={colors.main}
-        onClick={() => {setDisabled(!disabled)}}
-        >
-          Create Model
-        </Button>
       </SelectContainer>
 
-      <MainPanel disabled={disabled}/>
+      <MainPanel disabled={disabled} value={value}/>
     </ Container>
   )
 }
