@@ -18,7 +18,13 @@ import { ChakraThemes } from './style/themes';
 
 function App() {
   return (
-    <ChakraProvider theme={ChakraThemes}>
+    <ChakraProvider 
+      theme={ChakraThemes}
+      toastOptions={{ defaultOptions: { position: 'top-left',
+        colorScheme: 'teal',
+        duration: '3000',
+        isClosable: 'true' }}}
+    >
       <UserProvider>
         <Router>
           <Routes>

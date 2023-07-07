@@ -9,7 +9,7 @@ const SignPage = ({children}) => {
   return(
     <Container>
       <FormContainer>
-        <Logo theme={themes.light}/>
+        <Logo theme={themes.light} fontSize="4rem"/>
           {children}
       </FormContainer>
     </Container>
@@ -29,7 +29,7 @@ const FormContainer = styled.div`
   width: 500px;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 3rem;
 
   align-items: center;
   padding: 4rem;
