@@ -18,37 +18,39 @@ import { ChakraThemes } from './style/themes';
 
 function App() {
   return (
-    <ChakraProvider 
+    <ChakraProvider
       theme={ChakraThemes}
-      toastOptions={{ defaultOptions: { position: 'top-left',
-        colorScheme: 'teal',
-        duration: '3000',
-        isClosable: 'true' }}}
+      toastOptions={{
+        defaultOptions: {
+          position: 'top-left',
+          colorScheme: 'teal',
+          duration: '3000',
+          isClosable: 'true'
+        }
+      }}
     >
       <UserProvider>
         <Router>
           <Routes>
-            <Route path='/' element={<SignIn/>}/>
-            <Route path='/sign-in' element={<SignIn/>}/>
-            <Route path='/sign-up' element={<SignUp/>}/>
-            
-              <Route path='/app' element={          
-              // <ProtectedRouteGuard>
-              <>
-                <Header/>
-                <Outlet/>
-              </>
-              // </ProtectedRouteGuard>
-              }>
-                {/* <Route path="welcome" element={<FillSubscription />} /> */}
-                <Route path="analysis" element={<AnalysisPage />} />
-                <Route path="result" element={<ResultPage />} />
-                <Route path="settings" element={<SettingsPage />} />
-                <Route path="user" element={<UserPage />} />
-                <Route path="data" element={<DataPage />} />
-                <Route path="mode" element={<ModePage />} />
-                <Route index path="*" element={<Navigate to="/app/analysis" />} />
-              </Route>
+            <Route path='/sign-in' element={<SignIn />} />
+            <Route path='/sign-up' element={<SignUp />} />
+            <Route index path='*' element={<Navigate to='/app' />} />
+
+            <Route path='/app' element={
+              <ProtectedRouteGuard>
+                <Header />
+                <Outlet />
+              </ProtectedRouteGuard>
+            }>
+              {/* <Route path="welcome" element={<FillSubscription />} /> */}
+              <Route path="analysis" element={<AnalysisPage />} />
+              <Route path="result" element={<ResultPage />} />
+              <Route path="settings" element={<SettingsPage />} />
+              <Route path="user" element={<UserPage />} />
+              <Route path="data" element={<DataPage />} />
+              <Route path="mode" element={<ModePage />} />
+              <Route index path="*" element={<Navigate to="/app/analysis" />} />
+            </Route>
 
           </Routes>
         </Router>
