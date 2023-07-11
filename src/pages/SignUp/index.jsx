@@ -29,16 +29,15 @@ const SignUp = () => {
 
   const onSubmit = async data => {
     delete data.repeatPassword
-    console.log(data)
+
     try {
-      const userData = await signUp(data)
-      console.log(userData)
+      await signUp(data)
       toast({ title: 'Inscrito com sucesso! Por favor, faça login' });
       navigate('/sign-in');
     } catch (e) {
       toast({
         title: 'Não foi possível fazer o cadastro!',
-        description: e.message,
+        description: e.response?.data?.error,
         colorScheme: 'red'
       });
     }
