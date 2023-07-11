@@ -1,5 +1,5 @@
 import { Input, InputGroup, InputRightElement, Button, useToast, FormControl, useBoolean } from '@chakra-ui/react'
-// import { useContext } from "react";
+import { useContext } from "react";
 import styled from "styled-components";
 import { RiEye2Line, RiEyeCloseLine } from 'react-icons/ri'
 import { useForm } from "react-hook-form"
@@ -9,7 +9,7 @@ import { colors } from "../../style/color";
 import { Link, useNavigate } from "react-router-dom";
 import useSignIn from "../../hooks/api/useSignIn";
 import SignPage from "../SignPage";
-// import UserContext from "../../context/userContext";
+import UserContext from "../../context/userContext";
 import { signInSchema } from "../../schemas/signInSchema";
 
 const SignIn = () => {
@@ -19,22 +19,22 @@ const SignIn = () => {
   const toast = useToast();
   const { signIn } = useSignIn();
   const navigate = useNavigate();
-  // const { setUserData } = useContext(UserContext);
+  const { setUserData } = useContext(UserContext);
   const { handleSubmit, register, formState: { errors, isSubmitting } } = useForm({
     resolver: joiResolver(signInSchema)
   });
 
   const onSubmit = async data => {
-    console.log(data)
+
     try {
       const userData = await signIn(data)
-      console.log(userData)
+      setUserData(userData)
       toast({ title: 'Login realizado com sucesso' });
       navigate('/app/analysis');
     } catch (e) {
       toast({
         title: 'Não foi possível realizar o login!',
-        description: e.message,
+        description: e.response?.data?.error,
         colorScheme: 'red'
       });
     }
