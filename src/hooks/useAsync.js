@@ -1,11 +1,13 @@
+import { useToast } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 
 export default function useAsync(handler, immediate = true) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(immediate);
   const [error, setError] = useState(null);
+  const toast = useToast()
 
-  const act = async(...args) => {
+  const act = async (...args) => {
     setLoading(true);
     setError(null);
 
@@ -17,6 +19,7 @@ export default function useAsync(handler, immediate = true) {
     } catch (err) {
       setError(err);
       setLoading(false);
+      toast({ title: err.message, colorScheme: 'red' })
       throw err;
     }
   };
