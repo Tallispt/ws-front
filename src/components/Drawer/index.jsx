@@ -1,9 +1,9 @@
-// import { useContext } from "react"
-// import UserContext from "../../context/userContext"
+import { useContext } from "react"
+import UserContext from "../../context/userContext"
 import { Link } from "react-router-dom";
 import styled from "styled-components"
-import {IoPlanetOutline, IoCameraOutline, IoStatsChartOutline, IoOptionsOutline, IoEyedropOutline} from "react-icons/io5"
-import { Drawer, DrawerOverlay, DrawerContent} from '@chakra-ui/react'
+import { IoPlanetOutline, IoCameraOutline, IoStatsChartOutline, IoOptionsOutline, IoEyedropOutline } from "react-icons/io5"
+import { Drawer, DrawerOverlay, DrawerContent } from '@chakra-ui/react'
 import { colors } from "../../style/color";
 import Divider from "../Divider";
 
@@ -31,48 +31,46 @@ const Pages = [
 ]
 
 function toggleOnDiffPage(pageRoute, pathName, onClose) {
-  if(pageRoute !== pathName) {
+  if (pageRoute !== pathName) {
     onClose()
   }
 }
 
-const SideMenu = ({...props}) => {
-  
-  // const { userData } = useContext(UserContext);
+const SideMenu = ({ ...props }) => {
+
+  const { userData } = useContext(UserContext);
   const pathName = window.location.pathname.replace('/app/', '')
 
-  return(
+  return (
     <Drawer
-    isOpen={props.isOpen}
-    placement='right'
-    onClose={props.onClose}
+      isOpen={props.isOpen}
+      placement='right'
+      onClose={props.onClose}
     >
       <DrawerOverlay />
       <Content>
-        <DrawerTitle 
-        to={'user'}
-        pathName={pathName}
-        onClick={() => {toggleOnDiffPage('user', pathName, props.onClose)}}>
+        <DrawerTitle
+          to={'user'}
+          pathName={pathName}
+          onClick={() => { toggleOnDiffPage('user', pathName, props.onClose) }}>
           {/* TODO Trasformar em div para abrigar imagem do usuário */}
           <div>
-            <IoPlanetOutline size={'2rem'}/> 
+            <IoPlanetOutline size={'2rem'} />
           </div>
-          {/* TODO Abrigar nome do usuário vindo do Context */}
-          <p>Username</p>
-          {/* {userData.username} */}
+          <p>{userData.username}</p>
         </DrawerTitle>
         <Divider />
         <DrawerBody>
           {Pages.map((page, i) => (
-          <MenuItem
-            key={i}
-            to={page.route}
-            pathName={pathName}
-            onClick={() => {toggleOnDiffPage(page.route, pathName, props.onClose)}}
+            <MenuItem
+              key={i}
+              to={page.route}
+              pathName={pathName}
+              onClick={() => { toggleOnDiffPage(page.route, pathName, props.onClose) }}
             >
-            <page.icon size={'2rem'}/>
-            <p> {page.name} </p>
-          </MenuItem>
+              <page.icon size={'2rem'} />
+              <p> {page.name} </p>
+            </MenuItem>
           ))}
         </DrawerBody>
       </Content>

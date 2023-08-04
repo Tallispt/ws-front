@@ -15,6 +15,7 @@ import useToken from './hooks/useToken';
 import Header from './components/Header';
 import AnalysisPage from './pages/Analysis';
 import { ChakraThemes } from './style/themes';
+import styled from 'styled-components';
 
 function App() {
   return (
@@ -39,7 +40,9 @@ function App() {
             <Route path='/app' element={
               <ProtectedRouteGuard>
                 <Header />
-                <Outlet />
+                <BodyContainer>
+                  <Outlet />
+                </BodyContainer>
               </ProtectedRouteGuard>
             }>
               {/* <Route path="welcome" element={<FillSubscription />} /> */}
@@ -68,5 +71,13 @@ function ProtectedRouteGuard({ children }) {
 
   return <>{children}</>;
 }
+
+const BodyContainer = styled.div`
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-content: center;
+  padding: 8rem 0 3rem 0;
+`
 
 export default App;
