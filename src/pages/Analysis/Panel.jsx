@@ -90,7 +90,7 @@ const Panel = ({ type }) => {
     setOptions(() => SelectOptions.filter(item => item.type === type))
   }, [type])
 
-  const [value, setValue] = useState()
+  const [model, setModel] = useState()
   const [disabled, setDisabled] = useState(true)
   const [options, setOptions] = useState()
   // const { upload } = useUploadFile();
@@ -99,7 +99,7 @@ const Panel = ({ type }) => {
     const newValue = e.target.value
     const selectedOption = options.find(item => item.name === newValue)
 
-    setValue(selectedOption)
+    setModel(selectedOption)
 
     newValue ? setDisabled(false) : setDisabled(true)
   }
@@ -110,7 +110,7 @@ const Panel = ({ type }) => {
         <Select
           onChange={(e) => handleSelection(e)}
           placeholder={`Choose a ${type}`}
-          value={value?.name}
+          value={model?.name}
           flex='7'
         >
           {options?.map((item) => (
@@ -119,7 +119,7 @@ const Panel = ({ type }) => {
         </Select>
       </SelectContainer>
 
-      <MainPanel disabled={disabled} value={value} />
+      <MainPanel disabled={disabled} model={model} />
     </ Container>
   )
 }

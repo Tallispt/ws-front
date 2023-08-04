@@ -1,29 +1,26 @@
-import { useRef, useState, useCallback } from "react";
-import { IoRadioButtonOnSharp, IoEllipse, IoCheckmarkCircle, IoAlbumsOutline } from 'react-icons/io5';
+import { useState } from "react";
+import { IoRadioButtonOnSharp, IoAlbumsOutline } from 'react-icons/io5';
 import Webcam from "react-webcam";
 import { colors } from "../../style/color";
 import { Modal, ModalOverlay, ModalContent, ModalBody, ModalCloseButton, ModalFooter } from '@chakra-ui/react'
 import styled from "styled-components";
+import useCapture from "../../hooks/useCapture";
+// import PicsChecker from "./PicsChecker";
 
-const CameraModal = ({ isOpen, onClose, value, images, setImages }) => {
+const CameraModal = ({ isOpen, onClose, model, images, setImages, setHandleDisplayable }) => {
 
-  const webcamRef = useRef(null)
-  const [url, setUrl] = useState(null)
+  const numOfPics = model?.config.numOfPictures
 
-  const videoConstraints = {
-    width: 1280,
-    height: 720,
-    facingMode: "user"
-  }
-
-  const capturePhoto = useCallback(() => {
-    console.log(value)
-    const imgSrc = webcamRef.current.getScreenshot()
-    setUrl(imgSrc)
-    setImages(prevImage => prevImage ? (
-      [...prevImage, { data: imgSrc, name: webcamRef.current.stream.id }]) :
-      [{ data: imgSrc, name: webcamRef.current.stream.id }])
-  }, [webcamRef, setImages, value])
+  const {
+    webcamRef,
+    detectLoading,
+    videoConstraints,
+    capturePhoto
+  } = useCapture({
+    onClose,
+    setImages,
+    setHandleDisplayable
+  })
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -43,29 +40,23 @@ const CameraModal = ({ isOpen, onClose, value, images, setImages }) => {
           size={'lg'} />
 
         <ModalBody>
-          {
-            url ?
-              (<img src={url} alt="webcam" />) :
-              (<Camera
-                ref={webcamRef}
-                audio={false}
-                screenshotFormat="image/jpeg"
-                videoConstraints={videoConstraints}
-                mirrored
-              />)
-          }
+          <Camera
+            ref={webcamRef}
+            audio={false}
+            screenshotFormat="image/jpeg"
+            videoConstraints={videoConstraints}
+            mirrored
+          />
+          {detectLoading && (<IoAlbumsOutline />)}
         </ModalBody>
-        <Footer
-          justifyContent={'space-between'}
-          paddingX={'2rem'}
-        >
-          <ModeTitle>{value?.title} Mode</ModeTitle>
+        <Footer>
+          <ModeTitle>{model?.title} Mode</ModeTitle>
           <CaptureIcon onClick={capturePhoto} />
-          <div>
-            <IoEllipse />
-            <IoCheckmarkCircle />
-            <IoAlbumsOutline />
-          </div>
+          {/* <PicsChecker
+            numOfPics={numOfPics}
+            numOfTookenPics={images.length}
+          /> */}
+          {/* <IoAlbumsOutline /> */}
         </Footer>
       </ModalContent>
     </Modal>
@@ -86,9 +77,11 @@ const Footer = styled(ModalFooter)`
 `
 
 const ModeTitle = styled.p`
-    font-weight: 600;
-    font-size: 24px;
-    line-height: 24px;
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 24px;
+  position: absolute;
+  left: 3%;
 `
 
 const CaptureIcon = styled(IoRadioButtonOnSharp)`

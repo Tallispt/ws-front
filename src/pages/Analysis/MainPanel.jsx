@@ -1,124 +1,141 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { IoCameraOutline, IoPushOutline } from 'react-icons/io5';
-import { Box, Button, useDisclosure, useToast } from '@chakra-ui/react';
+import { Box, Button, useDisclosure, useBoolean } from '@chakra-ui/react';
 import styled from 'styled-components';
-import {useDropzone} from 'react-dropzone';
 
 import { colors } from '../../style/color';
-import useEncode from '../../hooks/useEncode';
+import useDrop from '../../hooks/useDrop';
 import Divider from '../../components/Divider';
 import CameraModal from './CameraModal';
 import UploadInput from './UploadInput';
+import ImgIcon from './ImgIcon';
+import ImageModal from './ImageModal';
 
-const MainPanel = ({disabled, value}) => {
-  
-  const {isOpen, onOpen, onClose} = useDisclosure()
-  const [images, setImages] = useState(null)
-  const { encode } = useEncode()
-  const toast = useToast()
-  
-  const onDrop = useCallback(async files => {
-    const FilesData = await Promise.all(files.map(async file => {
-        const base64 = await encode(file)
-        return ({name: file.name, data: base64})
-    }))
-    setImages(prevImage => prevImage ? (
-      [...prevImage, ...FilesData]) : 
-      [...FilesData])
-  }, [encode])
+const MainPanel = ({ disabled, model }) => {
 
-  const onDropRejected = useCallback((e) => {
-    setImages(null)
-    toast({
-      title: e[0].errors[0].message,
-      position: 'top-left',
-      colorScheme: 'red',
-      duration: '3000',
-      isClosable: 'true',
-    });
-  }, [toast])
-
-  const {getRootProps, 
-    getInputProps, 
-    open, 
+  const camModal = useDisclosure()
+  const imgModal = useDisclosure()
+  const [handleDisplayable, setHandleDisplayable] = useBoolean()
+  const [selectedImage, setSelectedImage] = useState()
+  const [images, setImages] = useState([])
+  const {
+    getRootProps,
+    getInputProps,
     isDragAccept,
-    isDragReject
-  } = useDropzone({
-    onDrop, 
-    onDropRejected,
-    noClick: true, 
-    maxFiles: value?.type === "model" ? 1 : value?.config.xValues.length,
-    accept: {'image/*': []}
+    isDragReject,
+    open,
+    onDrop
+  } = useDrop({
+    setImages,
+    model,
+    disabled,
+    setHandleDisplayable
   })
 
+  return (
+    <>
+      <Container {...getRootProps({ isDragAccept, isDragReject, disabled, handleDisplayable, images })}>
 
-  return(
-    <Container 
-    {...getRootProps({isDragAccept, isDragReject, disabled})}
-    >
+        {
+          handleDisplayable && images.length > 0 ?
 
-      {
-        images ?
+            (
+              <>
+                <Title>Selected image(s)</Title>
+                <ImageWrapContainer>
+                  {images.map((item) => (
+                    <ImgIcon
+                      key={item.key}
+                      img={item}
+                      images={images}
+                      setImages={setImages}
+                      setSelectedImage={setSelectedImage}
+                      onOpen={imgModal.onOpen}
+                      open={open}
+                      getInputProps={getInputProps}
+                    />
+                  ))}
+                </ImageWrapContainer>
+                <Button
+                  color={colors.black}
+                  backgroundColor={colors.white}
+                  isDisabled={disabled}
+                  isActive={disabled}
+                  _hover={!disabled ? null : { brightness: 0.1 }}
+                  _disabled={{
+                    bg: colors.gray,
+                    color: colors.gray400
+                  }}
+                  onClick={() => { }}
+                >
+                  Select file(s)
+                </Button>
+              </>
+            ) :
 
-        (<>
-          {images.map((item, index) => (
-            <img key={index} src={item.data} alt={item.name}/>
-            ))}
-        </>) :
 
-        (<>
-          <Content>
-            <TitleContainer>
-              <IoCameraOutline />
-              <Title>Create your detaction</Title>
-            </TitleContainer>
-            <Button 
-            color={colors.black} 
-            backgroundColor={colors.white}
-            isDisabled={disabled}
-            isActive={disabled}
-            _hover={!disabled ? null : {brightness: 0.1}}
-            _disabled={{
-              bg: colors.gray,
-              color: colors.gray400
-            }}
-            onClick={onOpen}
-            >
-              Open camera
-            </Button>
-        </Content>
+            (<>
+              <Content>
+                <TitleContainer>
+                  <IoCameraOutline />
+                  <Title>Create your detaction</Title>
+                </TitleContainer>
+                <Button
+                  color={colors.black}
+                  backgroundColor={colors.white}
+                  isDisabled={disabled}
+                  isActive={disabled}
+                  _hover={!disabled ? null : { brightness: 0.1 }}
+                  _disabled={{
+                    bg: colors.gray,
+                    color: colors.gray400
+                  }}
+                  onClick={camModal.onOpen}
+                >
+                  Open camera
+                </Button>
+              </Content>
 
-        <Divider />
-        
-        <Content>
-          <TitleContainer>
-            <IoPushOutline />
-            <div>
-              <Title>Drag your file(s) here</Title>
-              <SubTitle>.jpeg .jpg .png</SubTitle>
-            </div>
-          </TitleContainer>
-          <UploadInput 
-          disabled={disabled} 
-          value={value}
-          setImages={setImages}
-          getInputProps={getInputProps}
-          open={open}
-          onDrop={onDrop}
-          />
-        </Content>
+              <Divider />
 
-        <CameraModal 
-        isOpen={isOpen} 
-        onClose={onClose} 
-        value={value}
+              <Content>
+                <TitleContainer>
+                  <IoPushOutline />
+                  <div>
+                    <Title>Drag your file(s) here</Title>
+                    <SubTitle>.jpeg .jpg .png</SubTitle>
+                  </div>
+                </TitleContainer>
+                <UploadInput
+                  disabled={disabled}
+                  model={model}
+                  setImages={setImages}
+                  getInputProps={getInputProps}
+                  open={open}
+                  onDrop={onDrop}
+                />
+              </Content>
+            </>)
+        }
+
+      </Container>
+
+      <CameraModal
+        isOpen={camModal.isOpen}
+        onClose={camModal.onClose}
+        model={model}
         images={images}
         setImages={setImages}
-        />
-      </>
-      )}
+        setHandleDisplayable={setHandleDisplayable}
+      />
 
-    </Container>
+      <ImageModal
+        isOpen={imgModal.isOpen}
+        onClose={imgModal.onClose}
+        selectedImage={selectedImage}
+      />
+
+    </>
   )
 }
 
@@ -128,7 +145,7 @@ const getColor = (props) => {
     return colors.gray600;
   }
   if (isDragReject) {
-      return colors.red;
+    return colors.red;
   }
   return;
 }
@@ -142,22 +159,32 @@ const getBorder = (props) => {
 }
 
 const Container = styled(Box)`
-  opacity: ${props => props.disabled ? 0.9 : 1};
   outline-width: ${props => getBorder(props)};
   outline-color: ${props => getColor(props)};
   outline-style: dashed;
-  background-color: ${props => props.disabled ? colors.gray400 : colors.main};
   width: 38rem;
   height: 32rem;
+  background-color: ${colors.main};
   border-radius: 2rem;
   box-shadow: 0px 0px 4px 2px rgba(104, 109, 118, 0.25);
-
+  outline-style: dashed;
+  
   padding: 0 3rem;
   display: flex;
+  flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
-  flex-direction: column;
-`
+  
+  ${({ disabled }) => !disabled} {
+    opacity: 0.9;
+    background-color: ${colors.gray400};
+    }
+  `
+
+const ImageWrapContainer = styled.div`
+  flex-wrap: wrap;
+  gap: 1rem;
+  `
 
 const Content = styled.div`
   display: flex;
