@@ -1,9 +1,9 @@
 import { useContext } from "react"
 import UserContext from "../../context/userContext"
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components"
 import { IoPlanetOutline, IoCameraOutline, IoStatsChartOutline, IoOptionsOutline, IoEyedropOutline } from "react-icons/io5"
-import { Drawer, DrawerOverlay, DrawerContent } from '@chakra-ui/react'
+import { Drawer, DrawerOverlay, DrawerContent, DrawerFooter } from '@chakra-ui/react'
 import { colors } from "../../style/color";
 import Divider from "../Divider";
 
@@ -38,8 +38,14 @@ function toggleOnDiffPage(pageRoute, pathName, onClose) {
 
 const SideMenu = ({ ...props }) => {
 
-  const { userData } = useContext(UserContext);
+  const { userData, setUserData } = useContext(UserContext)
+  const navigate = useNavigate();
   const pathName = window.location.pathname.replace('/app/', '')
+
+  const handleEndSession = () => {
+    localStorage.removeItem('userData')
+    navigate('/sign-in')
+  }
 
   return (
     <Drawer
@@ -73,6 +79,9 @@ const SideMenu = ({ ...props }) => {
             </MenuItem>
           ))}
         </DrawerBody>
+        <DrawerFooter>
+          <p onClick={handleEndSession}>Sair</p>
+        </DrawerFooter>
       </Content>
     </Drawer>
   )
