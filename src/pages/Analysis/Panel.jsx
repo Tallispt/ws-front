@@ -9,8 +9,10 @@ const SelectOptions = [
     userId: '',
     name: 'deafult',
     title: 'Default Option',
-    type: 'model', 
+    type: 'model',
     config: {
+      numOfPictures: 3,
+      detectBorders: true,
       regressionId: '',
       regressionName: 'default',
       xCoordLable: 'pH',
@@ -24,8 +26,10 @@ const SelectOptions = [
     userId: '',
     name: 'regression1',
     title: 'Regression 1',
-    type: 'regression', 
+    type: 'regression',
     config: {
+      numOfPictures: 1,
+      detectBorders: true,
       regressionName: 'default',
       xCoordLable: 'pH',
       xValues: [4, 5, 6, 7, 8, 9],
@@ -44,8 +48,10 @@ const SelectOptions = [
     userId: '',
     name: 'regression2',
     title: 'Regression 2',
-    type: 'regression', 
+    type: 'regression',
     config: {
+      numOfPictures: 1,
+      detectBorders: true,
       regressionName: 'default',
       xCoordLable: 'pH',
       xValues: [4, 5, 6, 7, 8, 9],
@@ -64,25 +70,27 @@ const SelectOptions = [
     userId: '',
     name: 'model1',
     title: 'Model 1',
-    type: 'model', 
+    type: 'model',
     config: {
+      numOfPictures: 3,
+      detectBorders: true,
       regressionId: '',
       regressionName: 'default',
       xCoordLable: 'pH',
       xValues: [4, 5, 6, 7, 8, 9],
       yCoordLable: 'Color value',
-      yValues: []
+      yValues: [],
     }
   },
 ]
 
-const Panel = ({type}) => {
+const Panel = ({ type }) => {
 
   useEffect(() => {
     setOptions(() => SelectOptions.filter(item => item.type === type))
   }, [type])
 
-  const [value, setValue] = useState()
+  const [model, setModel] = useState()
   const [disabled, setDisabled] = useState(true)
   const [options, setOptions] = useState()
   // const { upload } = useUploadFile();
@@ -91,7 +99,7 @@ const Panel = ({type}) => {
     const newValue = e.target.value
     const selectedOption = options.find(item => item.name === newValue)
 
-    setValue(selectedOption)
+    setModel(selectedOption)
 
     newValue ? setDisabled(false) : setDisabled(true)
   }
@@ -99,11 +107,11 @@ const Panel = ({type}) => {
   return (
     <Container>
       <SelectContainer>
-        <Select 
-        onChange={(e) => handleSelection(e)}
-        placeholder={`Choose a ${type}`}
-        value={value?.name}
-        flex='7' 
+        <Select
+          onChange={(e) => handleSelection(e)}
+          placeholder={`Choose a ${type}`}
+          value={model?.name}
+          flex='7'
         >
           {options?.map((item) => (
             <option key={item.id} value={item.name} >{item.title}</option>
@@ -111,7 +119,7 @@ const Panel = ({type}) => {
         </Select>
       </SelectContainer>
 
-      <MainPanel disabled={disabled} value={value}/>
+      <MainPanel disabled={disabled} model={model} />
     </ Container>
   )
 }

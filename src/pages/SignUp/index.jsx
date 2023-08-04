@@ -16,14 +16,13 @@ const SignUp = () => {
 
   const toast = useToast();
   const navigate = useNavigate();
-  const { signUp } = useSignUp();
+  const { signUp, signUpLoading } = useSignUp();
 
   const { handleSubmit, register, formState: { errors, isSubmitting } } = useForm({
     resolver: joiResolver(signUpSchema)
   });
 
   const onValidating = (e) => {
-    console.log(e)
     e && toast({ title: e.message, colorScheme: 'red' });
   }
 
@@ -148,7 +147,7 @@ const SignUp = () => {
             color={colors.white}
             marginTop={'3rem'}
             marginBottom={3}
-            isLoading={isSubmitting}
+            isLoading={signUpLoading}
           >Inscrever</Button>
           <Button
             to={'/sign-in'}
