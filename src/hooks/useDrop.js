@@ -1,30 +1,37 @@
 import { useCallback } from "react"
-import useEncode from "./useEncode"
 import { useToast } from "@chakra-ui/react"
 import { useDropzone } from "react-dropzone"
+import { detect } from "../services/data"
 
-export default function useDrop({ setImages, model, disabled, setHandleDisplayable }) {
-  const { encode } = useEncode()
+export default function useDrop({setImage}) {
   const toast = useToast()
 
   const onDrop = useCallback(async files => {
     try {
-      const FilesData = await Promise.all(files.map(async file => {
-        const base64 = await encode(file)
-        return ({
-          key: 0,
-          name: file.name,
-          base64: base64
-        })
-      }))
-
-      setImages(prevImage => [...prevImage, ...FilesData])
-      setHandleDisplayable.on()
+      if (files.length > 1 || files.length < 1) throw Error;
+      const data = new FormData();
+      data.append('file', files[0]);
+      data.append('kernel', 5);
+      data.append('minDist', 45);
+      data.append('param1', 40);
+      data.append('param2', 15);
+      data.append('minRadius', 1);
+      data.append('maxRadius', 25);
+      data.append('radiusPercent', 1);
+      console.log(data.file);
+      const detectData = await detect(data);
+      console.log(detectData);
+      // const newImageUrls = URL.createObjectURL(files[0])
+      // setImage({
+      //   key: 1,
+      //   name: files[0].name,
+      //   url: newImageUrls
+      // })
 
     } catch (e) {
       toast({ title: e.message, colorScheme: 'red' })
     }
-  }, [encode, setImages, setHandleDisplayable, toast])
+  }, [toast, setImage])
 
   const onDropRejected = useCallback((e) => {
     toast({ title: e[0].errors[0].message, colorScheme: 'red' })
@@ -34,15 +41,18 @@ export default function useDrop({ setImages, model, disabled, setHandleDisplayab
     getRootProps,
     getInputProps,
     open,
+    isFocused,
     isDragAccept,
     isDragReject
   } = useDropzone({
     onDrop,
     onDropRejected,
+    // onError: onDropRejected,
     noClick: true,
-    maxFiles: model?.type === "model" ? 1 : model?.config.xValues.length,
+    maxFiles: 1,
     accept: { 'image/*': [] },
-    disabled: disabled
+    // disabled: disabled,
+    // maxSize: null,
   })
 
   return {
@@ -51,6 +61,7 @@ export default function useDrop({ setImages, model, disabled, setHandleDisplayab
     getRootProps,
     getInputProps,
     open,
+    isFocused,
     isDragAccept,
     isDragReject
   }

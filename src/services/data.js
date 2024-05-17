@@ -4,11 +4,22 @@ async function detect(data, token) {
   const response = await api.post('/data/detect',
     data,
     {
-      headers: { 'Authorization': `Bearer ${token}` },
+      headers: { 'Authorization': `Bearer ${token}`, 
+      'content-type': 'multipart/form-data' },
       // responseType: 'stream'
     })
   return response.data
 }
+
+async function delDetect(data, token) {
+  const response = await api.delete('/data/detect',
+    data,
+    {
+      headers: { 'Authorization': `Bearer ${token}`}
+    })
+    return response.data
+}
+
 
 async function getData(id, token) {
   const response = await api.get(`/data/${id}`,
@@ -64,6 +75,7 @@ async function del(id, token) {
 
 export {
   detect,
+  delDetect,
   getData,
   getUserDatas,
   save,

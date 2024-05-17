@@ -3,6 +3,7 @@ import { colors } from './color';
 
 const GlobalStyle = createGlobalStyle`
   @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 
   html, body, div, span, applet, object, iframe,
   h1, h2, h3, h4, h5, h6, p, blockquote, pre,
@@ -30,7 +31,7 @@ const GlobalStyle = createGlobalStyle`
     display: block;
   }
   body {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Inter', sans-serif;
     background-color: ${colors.background};
     line-height: 1;
   }
