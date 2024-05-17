@@ -40,7 +40,7 @@ const SignIn = () => {
       const userData = await signIn(data);
       setUserData(userData);
       toast({ title: "Login realizado com sucesso" });
-      navigate("/app/analysis");
+      navigate("/app/data");
     } catch (e) {
       toast({
         title: "Não foi possível realizar o login!",
@@ -57,7 +57,7 @@ const SignIn = () => {
           <InputGroup display={"flex"} flexDirection={"column"} gap={[2, 4]}>
             <Input
               id="username"
-              placeholder="E-mail ou usuário"
+              placeholder="Username or e-mail"
               {...register("username")}
               isRequired
               isInvalid={errors.username}
@@ -68,10 +68,14 @@ const SignIn = () => {
               background={colors.background}
             />
 
-            <InputGroup display={"flex"} justifyContent={"center"}>
+            <InputGroup
+              display={"flex"}
+              justifyContent={"center"}
+              alignItems={"center"}
+            >
               <Input
                 id="password"
-                placeholder="Senha"
+                placeholder="Password"
                 {...register("password")}
                 isRequired
                 isInvalid={errors.password}
@@ -83,14 +87,12 @@ const SignIn = () => {
                 background={colors.background}
               />
 
-              <InputRightElement>
-                <IconButton
-                  onClick={setShow.toggle}
-                  color={colors.main}
-                  background={"transparent"}
-                  icon={!show ? <RiEye2Line /> : <RiEyeCloseLine />}
-                />
-              </InputRightElement>
+              <InputRightElement
+                h={"full"}
+                onClick={setShow.toggle}
+                color={colors.main}
+                children={!show ? <RiEye2Line /> : <RiEyeCloseLine />}
+              />
             </InputGroup>
           </InputGroup>
 
@@ -103,7 +105,7 @@ const SignIn = () => {
               isLoading={isSubmitting}
               size={["sm", "md", "lg"]}
             >
-              Entrar
+              Sign-in
             </Button>
 
             <Button
@@ -115,7 +117,7 @@ const SignIn = () => {
               isDisabled={isSubmitting}
               size={["sm", "md", "lg"]}
             >
-              Registrar-se
+              Create account
             </Button>
           </Stack>
         </Stack>

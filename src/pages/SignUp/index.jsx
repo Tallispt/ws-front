@@ -6,7 +6,6 @@ import {
   useToast,
   useBoolean,
   Stack,
-  IconButton,
 } from "@chakra-ui/react";
 import { RiEye2Line, RiEyeCloseLine } from "react-icons/ri";
 import { Link, useNavigate } from "react-router-dom";
@@ -61,7 +60,7 @@ const SignUp = () => {
           <InputGroup display={"flex"} flexDirection={"column"} gap={[2, 4]}>
             <Input
               id="username"
-              placeholder="Nome do usuário"
+              placeholder="Username"
               {...register("username")}
               isRequired
               isInvalid={errors.username}
@@ -90,7 +89,7 @@ const SignUp = () => {
             <InputGroup>
               <Input
                 id="password"
-                placeholder="Senha"
+                placeholder="Password"
                 {...register("password")}
                 isRequired
                 isInvalid={errors.password}
@@ -102,20 +101,18 @@ const SignUp = () => {
                 type={show ? "text" : "password"}
                 background={colors.background}
               />
-              <InputRightElement>
-                <IconButton
-                  onClick={setShow.toggle}
-                  color={colors.main}
-                  background={"transparent"}
-                  icon={!show ? <RiEye2Line /> : <RiEyeCloseLine />}
-                />
-              </InputRightElement>
+              <InputRightElement
+                h={"full"}
+                onClick={setShow.toggle}
+                color={colors.main}
+                children={!show ? <RiEye2Line /> : <RiEyeCloseLine />}
+              />
             </InputGroup>
 
             <InputGroup>
               <Input
                 id="repeatPassword"
-                placeholder="Confirmar senha"
+                placeholder="Confirm password"
                 {...register("repeatPassword")}
                 isRequired
                 isInvalid={errors.repeatPassword}
@@ -127,14 +124,12 @@ const SignUp = () => {
                 type={showConfirmation ? "text" : "password"}
                 background={colors.background}
               />
-              <InputRightElement>
-                <IconButton
-                  onClick={setShowConfirmation.toggle}
-                  color={colors.main}
-                  background={"transparent"}
-                  icon={!showConfirmation ? <RiEye2Line /> : <RiEyeCloseLine />}
-                />
-              </InputRightElement>
+              <InputRightElement
+                h={"full"}
+                onClick={setShow.toggle}
+                color={colors.main}
+                children={!show ? <RiEye2Line /> : <RiEyeCloseLine />}
+              />
             </InputGroup>
           </InputGroup>
 
@@ -147,7 +142,7 @@ const SignUp = () => {
               isLoading={signUpLoading}
               size={["sm", "md", "lg"]}
             >
-              Inscrever
+              Sign-up
             </Button>
             <Button
               to={"/sign-in"}
@@ -158,7 +153,7 @@ const SignUp = () => {
               isDisabled={isSubmitting}
               size={["sm", "md", "lg"]}
             >
-              Já possuo conta
+              Sign-in Page
             </Button>
           </Stack>
         </Stack>

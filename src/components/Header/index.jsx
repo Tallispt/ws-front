@@ -1,43 +1,49 @@
-import styled from "styled-components"
-import { IoMenuOutline } from "react-icons/io5"
+import { IoMenuOutline } from "react-icons/io5";
+import MainLogo from "../MainLogo";
+import { Flex, IconButton, useDisclosure } from "@chakra-ui/react";
+import SideMenu from "../Drawer";
 
-import { colors } from "../../style/color"
-import MainLogo from "../MainLogo"
-import { useDisclosure } from "@chakra-ui/react"
-import SideMenu from "../Drawer"
+import { colors } from "../../style/color";
+import AlertModal from "../../pages/Data/AlertModal";
 
 const Header = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: alertIsOpen,
+    onOpen: alertOnOpen,
+    onClose: alertOnClose,
+  } = useDisclosure();
 
   return (
-    <HeaderContainer>
-      <MainLogo fontSize="3.4rem" />
-      <IoMenuOutline
+    <Flex
+      backgroundColor={"white"}
+      alignItems={"center"}
+      justifyContent={"space-between"}
+      px={["1rem", "4rem"]}
+      py={"0.5rem"}
+      position={"fixed"}
+      width={"100vw"}
+      boxShadow={"rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"}
+      zIndex={1}
+    >
+      <MainLogo />
+      <IconButton
+        as={IoMenuOutline}
+        variant={"ghost"}
+        fontSize={["4xl", "5xl"]}
         color={colors.main}
-        size={48}
         onClick={onOpen}
+        cursor={"pointer"}
       />
 
-      <SideMenu isOpen={isOpen} onClose={onClose} />
+      <SideMenu isOpen={isOpen} onClose={onClose} alertOnOpen={alertOnOpen} />
+      <AlertModal
+        isOpen={alertIsOpen}
+        onClose={alertOnClose}
+        onOpen={alertOnOpen}
+      />
+    </Flex>
+  );
+};
 
-    </HeaderContainer>
-
-  )
-}
-
-const HeaderContainer = styled.div`
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-  background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 3rem;
-  width: 100vw;
-  position: fixed;
-
-  svg:hover {
-    cursor: pointer;
-  }
-`
-
-export default Header
+export default Header;

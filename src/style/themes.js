@@ -18,6 +18,10 @@ const ChakraThemes = extendTheme({
       100: colors.main,
       700: colors.white,
     },
+    fonts: {
+      heading: `'Roboto', sans-serif`,
+      body: `'Inter', sans-serif`,
+    },
   },
 
 });
