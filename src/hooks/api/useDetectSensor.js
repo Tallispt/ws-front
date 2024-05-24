@@ -8,12 +8,14 @@ export default function useDetectSensor() {
   const token = useToken()
 
   const {
+    data: detectResponse,
     loading: detectLoading,
     error: detectError,
     act: detect
   } = useAsync((data) => dataApi.detect(data, token), false);
 
   return {
+    detectResponse,
     detectLoading,
     detectError,
     detect

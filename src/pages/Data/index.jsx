@@ -1,45 +1,37 @@
-import { IconButton, VStack } from "@chakra-ui/react";
+import { Center, FormControl, IconButton, VStack } from "@chakra-ui/react";
 import { IoAdd } from "react-icons/io5";
 
-import useResult from "../../hooks/api/useResult";
+import useData from "../../hooks/api/useData";
 import Header from "../../components/Header";
 import { colors } from "../../style/color";
 import { Link } from "react-router-dom";
 import CardContainer from "./Card";
+import NoDataContainer from "./NoDataContainer";
+import Loading from "../../components/Loading";
 
 const DataPage = () => {
-  // const { resultData } = useResult();
-
+  const { transformedData: data, dataLoading } = useData();
   return (
     <>
       <VStack h={"100vh"}>
         <Header />
-        <VStack pt={"4.6rem"}>
-          <CardContainer />
-        </VStack>
-
-        {/* <Flex
-          gap={"1rem"}
-          color={colors.gray600}
-          opacity={0.7}
-          alignItems={"center"}
-          position={"fixed"}
-          top={"50%"}
-        >
-          <Icon
-            as={IoFlaskOutline}
-            fontSize={["5xl", "6xl"]}
-            color={colors.main}
-          />
-          <Box>
-            <Heading as={"h1"} size={["md", "lg"]} fontWeight={600}>
-              No data found
-            </Heading>
-            <Text fontSize={["sm", "md"]} fontWeight={400}>
-              Create an analysis
-            </Text>
-          </Box>
-        </Flex> */}
+        {dataLoading ? (
+          <Center minw={"100vw"} minH={"100vh"}>
+            <Loading />
+          </Center>
+        ) : (
+          <>
+            {data ? (
+              <FormControl pt={"4.6rem"} pb={"5rem"}>
+                {data?.reverse().map((item) => (
+                  <CardContainer key={item?._id} item={item} />
+                ))}
+              </FormControl>
+            ) : (
+              <NoDataContainer />
+            )}
+          </>
+        )}
 
         <IconButton
           as={Link}

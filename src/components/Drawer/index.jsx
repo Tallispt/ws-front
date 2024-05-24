@@ -50,7 +50,6 @@ const SideMenu = ({ ...props }) => {
             gap={"2rem"}
             p={"1.5rem 0 0 1rem"}
             _hover={{ opacity: "0.8" }}
-            // onClick={() => navigate("app/user")}
           >
             <Avatar color={colors.gray} size={["md", "lg"]} />
             <Heading as={"h1"} size={["md", "lg"]} fontWeight={700}>

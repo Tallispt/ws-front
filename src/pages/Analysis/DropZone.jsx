@@ -1,9 +1,19 @@
-import { Button, Input, Center, Icon, Image, Box } from "@chakra-ui/react";
+import {
+  Button,
+  Input,
+  Center,
+  Icon,
+  Image,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { IoAdd } from "react-icons/io5";
 
 import { colors } from "../../style/color";
 import { useMemo, useState } from "react";
 import useDrop from "../../hooks/useDrop";
+import ConfirmImageModal from "./ConfirmImageModal";
+import Loading from "../../components/Loading";
+import GoBackModal from "./GoBackModal";
 
 const baseStyle = {
   height: "10rem",
@@ -36,8 +46,21 @@ const rejectStyle = {
   colors: colors.red,
 };
 
-const DropZone = () => {
-  const [image, setImage] = useState();
+const DropZone = ({
+  setFlag,
+  detectForm,
+  setDetectForm,
+  goBackOnClose,
+  goBackOnOpen,
+  goBackIsOpen,
+  setDataId,
+  detectResponse,
+  detect,
+  detectLoading,
+}) => {
+  const [image, setImage] = useState({ isSelected: true });
+  const { onClose, onOpen, isOpen } = useDisclosure();
+
   const {
     getRootProps,
     getInputProps,
@@ -48,6 +71,7 @@ const DropZone = () => {
     onDrop,
   } = useDrop({
     setImage,
+    onOpen,
   });
 
   const style = useMemo(
@@ -62,7 +86,7 @@ const DropZone = () => {
 
   return (
     <Center>
-      {!image ? (
+      {!detectResponse ? (
         <Center {...getRootProps({ style })} onDrop={onDrop}>
           <Input {...getInputProps()} />
           <Button
@@ -71,18 +95,45 @@ const DropZone = () => {
             variant={"unstyled"}
             boxSize={"100%"}
           >
-            <Icon as={IoAdd} fontSize={"4xl"} />
+            <>
+              {detectLoading ? (
+                <Center>
+                  <Loading w={"3rem"} />
+                </Center>
+              ) : (
+                <Icon as={IoAdd} fontSize={"4xl"} />
+              )}
+            </>
           </Button>
         </Center>
       ) : (
         <Image
           borderRadius={10}
           objectFit={"cover"}
-          boxSize={"10rem"}
-          src={image.url}
+          maxH={"20rem"}
+          maxW={"100%"}
+          src={detectResponse.drawnImage}
           alt={`imag1.5em_${image.key}`}
+          fallbackSrc="https://tmsvalue.co.uk/wp-content/uploads/2017/03/Square-500x500-mid-grey-300x300.png"
         />
       )}
+      <ConfirmImageModal
+        onClose={onClose}
+        onOpen={onOpen}
+        isOpen={isOpen}
+        image={image}
+        detect={detect}
+        setFlag={setFlag}
+        detectForm={detectForm}
+        setDetectForm={setDetectForm}
+        setDataId={setDataId}
+      />
+      <GoBackModal
+        onClose={goBackOnClose}
+        onOpen={goBackOnOpen}
+        isOpen={goBackIsOpen}
+        id={detectResponse?.id}
+      />
     </Center>
   );
 };

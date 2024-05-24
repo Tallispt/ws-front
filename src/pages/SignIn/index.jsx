@@ -5,7 +5,6 @@ import {
   Button,
   useToast,
   useBoolean,
-  IconButton,
   Stack,
 } from "@chakra-ui/react";
 import { useContext } from "react";
@@ -39,11 +38,11 @@ const SignIn = () => {
     try {
       const userData = await signIn(data);
       setUserData(userData);
-      toast({ title: "Login realizado com sucesso" });
+      toast({ title: "Login successfully" });
       navigate("/app/data");
     } catch (e) {
       toast({
-        title: "Não foi possível realizar o login!",
+        title: "Not able to login!",
         description: e.response?.data?.error,
         colorScheme: "red",
       });
