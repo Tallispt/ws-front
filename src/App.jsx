@@ -51,7 +51,7 @@ function App() {
             >
               {/* <Route path="welcome" element={<FillSubscription />} /> */}
               <Route path="analysis" element={<AnalysisPage />} />
-              <Route path="result" element={<ResultPage />} />
+              <Route path="result/:id" element={<ResultPage />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route path="user" element={<UserPage />} />
               <Route path="data" element={<DataPage />} />

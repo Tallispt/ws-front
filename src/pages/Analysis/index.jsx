@@ -6,13 +6,13 @@ import {
   AccordionPanel,
   Box,
   Button,
+  Card,
   Center,
+  Checkbox,
   Flex,
   FormControl,
   FormLabel,
   HStack,
-  Heading,
-  IconButton,
   Input,
   NumberDecrementStepper,
   NumberIncrementStepper,
@@ -21,6 +21,7 @@ import {
   NumberInputStepper,
   Radio,
   RadioGroup,
+  Select,
   Slider,
   SliderFilledTrack,
   SliderMark,
@@ -28,23 +29,37 @@ import {
   SliderTrack,
   Tooltip,
   VStack,
+  useBoolean,
+  useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
-import { IoChevronBack } from "react-icons/io5";
 import DropZone from "./DropZone";
 import { colors } from "../../style/color";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import InsideHeader from "../../components/InsideHeader";
+import useSaveResult from "../../hooks/api/useSaveResult";
+import useDetectSensor from "../../hooks/api/useDetectSensor";
 
-const InputComponent = ({ paramName, defVal, minVal, maxVal }) => {
+const InputComponent = ({
+  title,
+  paramName,
+  defVal,
+  minVal,
+  maxVal,
+  flag,
+  detectForm,
+  setDetectForm,
+}) => {
   return (
-    <Flex alignItems={"center"} w={"100%"}>
+    <Flex key={title} alignItems={"center"} w={"100%"}>
       <FormLabel
         textAlign={"start"}
         flex={1}
         fontWeight={"bold"}
         whiteSpace={"nowrap"}
       >
-        {paramName}
+        {title}
       </FormLabel>
       <NumberInput
         flex={1}
@@ -54,6 +69,11 @@ const InputComponent = ({ paramName, defVal, minVal, maxVal }) => {
         min={minVal}
         max={maxVal}
         allowMouseWheel
+        isDisabled={flag}
+        onChange={(value) =>
+          setDetectForm((prevState) => ({ ...prevState, [paramName]: value }))
+        }
+        value={detectForm[paramName]}
       >
         <NumberInputField />
         <NumberInputStepper>
@@ -66,35 +86,88 @@ const InputComponent = ({ paramName, defVal, minVal, maxVal }) => {
 };
 
 const AnalysisPage = () => {
-  const SampleNum = 5;
-  const [sliderValue, setSliderValue] = useState(100);
-  const [showTooltip, setShowTooltip] = useState(false);
+  const [detectForm, setDetectForm] = useState({
+    file: null,
+    kernel: 5,
+    minDist: 45,
+    param1: 40,
+    param2: 15,
+    minRadius: 1,
+    maxRadius: 25,
+    radiusPercent: 1,
+    sortingType: "h",
+  });
+
+  const [resultForm, setResultForm] = useState({
+    name: "Analysis001",
+    location: null,
+    sampleNum: 5,
+    replicateNum: 3,
+    xLabel: "Analyte",
+    mode: "0",
+    channels: ["RGB", "CMYK", "HSV", "E"],
+    xValues: Array(5).fill(""),
+  });
+
+  const channelCheckbox = [
+    { key: "RGB", name: "RGB" },
+    { key: "CMYK", name: "CMYK" },
+    { key: "HSV", name: "HSV" },
+    { key: "E", name: "Euclidian Distance (E)" },
+  ];
+
+  const {
+    onOpen: goBackOnOpen,
+    onClose: goBackOnClose,
+    isOpen: goBackIsOpen,
+  } = useDisclosure();
+  const [showTooltip, setShowTooltip] = useBoolean(false);
+  const [flag, setFlag] = useBoolean();
+  const { detectResponse, detect, detectLoading } = useDetectSensor();
+  const { saveResult } = useSaveResult();
+  const toast = useToast();
+
   const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    if (flag) {
+      goBackOnOpen();
+      return;
+    }
+    navigate("/app/data");
+  };
+
+  const handleCreateResult = async () => {
+    try {
+      const data = {
+        name: resultForm.name,
+        location: resultForm.location,
+        dataId: detectResponse.id,
+        infoResult: {
+          mode: resultForm.mode,
+          yLabel: "Color Value",
+          xLabel: resultForm.xLabel,
+          replicateNum: resultForm.replicateNum,
+          sampleNum: resultForm.sampleNum,
+          xValues: resultForm.xValues,
+          channels: resultForm.channels,
+        },
+      };
+      const response = await saveResult(data);
+      navigate(`/app/result/${response.id}`);
+    } catch (e) {
+      console.log(e);
+      toast({
+        title: "Not able to create result!",
+        description: e.response?.data?.error,
+        colorScheme: "red",
+      });
+    }
+  };
 
   return (
     <VStack>
-      <Flex
-        backgroundColor={"white"}
-        alignItems={"center"}
-        px={["1rem", "4rem"]}
-        py={"1rem"}
-        position={"fixed"}
-        width={"100vw"}
-        boxShadow={"rgba(99, 99, 99, 0.2) 0px 2px 8px 0px"}
-        zIndex={1}
-      >
-        <IconButton
-          variant={"ghost"}
-          as={IoChevronBack}
-          size={"sm"}
-          color={colors.main}
-          cursor={"pointer"}
-          onClick={() => navigate("/app/data")}
-        />
-        <Heading fontSize={["xl", "2xl"]} textAlign={"center"} flex={1}>
-          Create analysis
-        </Heading>
-      </Flex>
+      <InsideHeader handleGoBack={handleGoBack} title="Create analysis" />
 
       <FormControl pt={"4.6rem"} pb={"1rem"}>
         <Box pb={4}>
@@ -102,7 +175,14 @@ const AnalysisPage = () => {
           <Input
             focusBorderColor={colors.main}
             bgColor={colors.graysh}
-            placeholder="Analysis001"
+            placeholder={resultForm.name}
+            value={resultForm.name}
+            onChange={(e) => {
+              setResultForm((prevState) => ({
+                ...prevState,
+                name: e.target.value,
+              }));
+            }}
           />
         </Box>
 
@@ -116,6 +196,14 @@ const AnalysisPage = () => {
               min={1}
               max={20}
               allowMouseWheel
+              onChange={(value) => {
+                setResultForm((prevState) => ({
+                  ...prevState,
+                  sampleNum: value,
+                  xValues: Array(parseInt(value)).fill(""),
+                }));
+              }}
+              value={resultForm.sampleNum}
             >
               <NumberInputField />
               <NumberInputStepper>
@@ -132,8 +220,15 @@ const AnalysisPage = () => {
               bgColor={colors.graysh}
               defaultValue={3}
               min={1}
-              max={6}
+              max={20}
               allowMouseWheel
+              onChange={(value) => {
+                setResultForm((prevState) => ({
+                  ...prevState,
+                  replicateNum: value,
+                }));
+              }}
+              value={resultForm.replicateNum}
             >
               <NumberInputField />
               <NumberInputStepper>
@@ -149,7 +244,14 @@ const AnalysisPage = () => {
           <Input
             focusBorderColor={colors.main}
             bgColor={colors.graysh}
-            placeholder="Anayte"
+            placeholder={resultForm.xLabel}
+            value={resultForm.xLabel}
+            onChange={(e) => {
+              setResultForm((prevState) => ({
+                ...prevState,
+                xLabel: e.target.value,
+              }));
+            }}
           />
         </Box>
 
@@ -166,8 +268,8 @@ const AnalysisPage = () => {
 
             <AccordionPanel pb={4} mx={"4rem"}>
               <VStack>
-                {Array.from({ length: SampleNum }).map((item, index) => (
-                  <Flex index={index} alignItems={"center"} w={"100%"}>
+                {resultForm.xValues.map((item, index) => (
+                  <Flex key={index} alignItems={"center"} w={"100%"}>
                     <FormLabel
                       textAlign={"start"}
                       flex={1}
@@ -177,10 +279,23 @@ const AnalysisPage = () => {
                       Sample {index + 1}:
                     </FormLabel>
                     <Input
+                      isRequired
                       flex={1}
                       type="number"
                       focusBorderColor={colors.main}
                       bgColor={colors.graysh}
+                      value={item}
+                      onChange={(event) => {
+                        const newValue = event.target.value;
+                        setResultForm((prevState) => {
+                          const newXValues = [...prevState.xValues];
+                          newXValues[index] = newValue;
+                          return {
+                            ...prevState,
+                            xValues: newXValues,
+                          };
+                        });
+                      }}
                     />
                   </Flex>
                 ))}
@@ -200,32 +315,76 @@ const AnalysisPage = () => {
             <AccordionPanel pb={4}>
               <Box pb={4}>
                 <FormLabel fontWeight={"bold"}>Channel</FormLabel>
-                <Flex justifyContent={"space-between"} pb={4}>
-                  <Radio colorScheme="teal" value="1" defaultChecked>
-                    RGB
-                  </Radio>
-                  <Radio colorScheme="teal" value="2" defaultChecked>
-                    CMYK
-                  </Radio>
-                  <Radio colorScheme="teal" value="3" defaultChecked>
-                    HSV
-                  </Radio>
+                <Flex justifyContent={"space-between"}>
+                  {channelCheckbox.map((item, index) => (
+                    <Checkbox
+                      key={index}
+                      colorScheme="teal"
+                      value={item.key}
+                      defaultChecked
+                      onChange={(event) => {
+                        const channelValue = event.target.value;
+                        setResultForm((prevState) => {
+                          let newChannels = [...prevState.channels];
+                          if (event.target.checked) {
+                            if (!newChannels.includes(channelValue)) {
+                              newChannels.push(channelValue);
+                            }
+                          } else {
+                            newChannels = newChannels.filter(
+                              (channel) => channel !== channelValue
+                            );
+                          }
+                          return {
+                            ...prevState,
+                            channels: newChannels,
+                          };
+                        });
+                      }}
+                    >
+                      {item.name}
+                    </Checkbox>
+                  ))}
                 </Flex>
-                <Radio colorScheme="teal" value="4" defaultChecked>
-                  Euclidian Distance (E)
-                </Radio>
               </Box>
               <Box pb={4}>
                 <FormLabel fontWeight={"bold"}>Color Extraction Mode</FormLabel>
-                <RadioGroup defaultValue="1">
+                <RadioGroup defaultValue={resultForm.mode}>
                   <Flex justifyContent={"space-between"}>
-                    <Radio colorScheme="teal" value="1">
+                    <Radio
+                      colorScheme="teal"
+                      value="0"
+                      onChange={(value) =>
+                        setResultForm((prevState) => ({
+                          ...prevState,
+                          mode: value.target.value,
+                        }))
+                      }
+                    >
                       None
                     </Radio>
-                    <Radio colorScheme="teal" value="2">
+                    <Radio
+                      colorScheme="teal"
+                      value="1"
+                      onChange={(value) =>
+                        setResultForm((prevState) => ({
+                          ...prevState,
+                          mode: value.target.value,
+                        }))
+                      }
+                    >
                       RGBHH
                     </Radio>
-                    <Radio colorScheme="teal" value="3">
+                    <Radio
+                      colorScheme="teal"
+                      value="2"
+                      onChange={(value) =>
+                        setResultForm((prevState) => ({
+                          ...prevState,
+                          mode: value.target.value,
+                        }))
+                      }
+                    >
                       HSVTHR
                     </Radio>
                   </Flex>
@@ -237,78 +396,160 @@ const AnalysisPage = () => {
                 </FormLabel>
                 <VStack mx={"4rem"}>
                   <InputComponent
-                    paramName="Kernel"
-                    defVal={3}
+                    title="Kernel"
+                    paramName="kernel"
+                    defVal={detectForm.kernel}
                     minVal={3}
                     maxVal={11}
+                    flag={flag}
+                    detectForm={detectForm}
+                    setDetectForm={setDetectForm}
                   />
                   <InputComponent
-                    paramName="Min. Dist."
-                    defVal={45}
+                    title="Min. Dist."
+                    paramName="minDist"
+                    defVal={detectForm.minDist}
                     minVal={1}
                     maxVal={200}
+                    flag={flag}
+                    detectForm={detectForm}
+                    setDetectForm={setDetectForm}
                   />
                   <InputComponent
-                    paramName="Param 1"
-                    defVal={40}
+                    title="Param 1"
+                    paramName="param1"
+                    defVal={detectForm.param1}
                     minVal={1}
                     maxVal={200}
+                    flag={flag}
+                    detectForm={detectForm}
+                    setDetectForm={setDetectForm}
                   />
                   <InputComponent
-                    paramName="Param 2"
-                    defVal={15}
+                    title="Param 2"
+                    paramName="param2"
+                    defVal={detectForm.param2}
                     minVal={1}
                     maxVal={200}
+                    flag={flag}
+                    detectForm={detectForm}
+                    setDetectForm={setDetectForm}
                   />
                   <InputComponent
-                    paramName="Min. Rad."
-                    defVal={1}
+                    title="Min. Rad."
+                    paramName="minRadius"
+                    defVal={detectForm.minRadius}
                     minVal={0}
                     maxVal={200}
+                    flag={flag}
+                    detectForm={detectForm}
+                    setDetectForm={setDetectForm}
                   />
                   <InputComponent
-                    paramName="Max. Rad."
-                    defVal={25}
+                    title="Max. Rad."
+                    paramName="maxRadius"
+                    defVal={detectForm.maxRadius}
                     minVal={0}
                     maxVal={200}
+                    flag={flag}
+                    detectForm={detectForm}
+                    setDetectForm={setDetectForm}
                   />
                 </VStack>
               </Box>
-              <Box>
+              <Box pb={4}>
+                <FormLabel fontWeight={"bold"}>Type of Sorting</FormLabel>
+                <VStack mx={"4rem"}>
+                  <Flex alignItems={"center"} w={"100%"}>
+                    <FormLabel
+                      textAlign={"start"}
+                      flex={1}
+                      fontWeight={"bold"}
+                      whiteSpace={"nowrap"}
+                    >
+                      Sorting Type
+                    </FormLabel>
+                    <Select
+                      isDisabled={flag}
+                      flex={1}
+                      value={detectForm.sortingType}
+                      onChange={(value) =>
+                        setDetectForm((prevState) => ({
+                          ...prevState,
+                          sortingType: value.target.value,
+                        }))
+                      }
+                    >
+                      <option value="h">Horizontal</option>
+                      <option value="v">Vertical</option>
+                    </Select>
+                  </Flex>
+                </VStack>
+              </Box>
+              <Box pb={4}>
                 <FormLabel fontWeight={"bold"}>Radius Percentage</FormLabel>
-                <Slider
-                  aria-label="slider-ex-1"
-                  defaultValue={100}
-                  min={1}
-                  max={150}
-                  colorScheme="teal"
-                  onChange={(v) => setSliderValue(v)}
-                  onMouseEnter={() => setShowTooltip(true)}
-                  onMouseLeave={() => setShowTooltip(false)}
-                >
-                  <SliderTrack>
-                    <SliderFilledTrack />
-                  </SliderTrack>
-                  <SliderMark value={50} mt="1" ml="-2.5" fontSize="sm">
-                    50%
-                  </SliderMark>
-                  <SliderMark value={100} mt="1" ml="-2.5" fontSize="sm">
-                    100%
-                  </SliderMark>
-                  <Tooltip
-                    hasArrow
-                    bg={colors.main}
-                    color="white"
-                    placement="top"
-                    isOpen={showTooltip}
-                    label={`${sliderValue}%`}
-                  >
-                    <SliderThumb />
-                  </Tooltip>
-                  {/* <SliderThumb boxSize={6}>
-                    <Box>{sliderValue}%</Box>
-                  </SliderThumb> */}
-                </Slider>
+                <Card p={5}>
+                  <HStack>
+                    <NumberInput
+                      defaultValue={detectForm.radiusPercent * 100}
+                      isDisabled={flag}
+                      min={1}
+                      max={150}
+                      flex={1}
+                      value={detectForm.radiusPercent * 100}
+                      onChange={(value) =>
+                        setDetectForm((prevState) => ({
+                          ...prevState,
+                          radiusPercent: value / 100,
+                        }))
+                      }
+                    >
+                      <NumberInputField />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                    <Slider
+                      aria-label="slider-ex-1"
+                      flex={3}
+                      defaultValue={detectForm.radiusPercent * 100}
+                      min={1}
+                      max={150}
+                      colorScheme="teal"
+                      isDisabled={flag}
+                      value={detectForm.radiusPercent * 100}
+                      onChange={(value) =>
+                        setDetectForm((prevState) => ({
+                          ...prevState,
+                          radiusPercent: value / 100,
+                        }))
+                      }
+                      onMouseEnter={setShowTooltip.on}
+                      onMouseLeave={setShowTooltip.off}
+                    >
+                      <SliderTrack>
+                        <SliderFilledTrack />
+                      </SliderTrack>
+                      <SliderMark value={50} mt="1" ml="-2.5" fontSize="sm">
+                        50%
+                      </SliderMark>
+                      <SliderMark value={100} mt="1" ml="-2.5" fontSize="sm">
+                        100%
+                      </SliderMark>
+                      <Tooltip
+                        hasArrow
+                        bg={colors.main}
+                        color="white"
+                        placement="top"
+                        isOpen={showTooltip}
+                        label={`${detectForm.radiusPercent * 100}%`}
+                      >
+                        <SliderThumb />
+                      </Tooltip>
+                    </Slider>
+                  </HStack>
+                </Card>
               </Box>
             </AccordionPanel>
           </AccordionItem>
@@ -316,7 +557,17 @@ const AnalysisPage = () => {
 
         <Box pb={4}>
           <FormLabel fontWeight={"bold"}>Image</FormLabel>
-          <DropZone />
+          <DropZone
+            setFlag={setFlag}
+            detectForm={detectForm}
+            setDetectForm={setDetectForm}
+            goBackOnClose={goBackOnClose}
+            goBackOnOpen={goBackOnOpen}
+            goBackIsOpen={goBackIsOpen}
+            detectResponse={detectResponse}
+            detect={detect}
+            detectLoading={detectLoading}
+          />
         </Box>
 
         <Center>
@@ -325,14 +576,15 @@ const AnalysisPage = () => {
             size={"lg"}
             bgColor={colors.main}
             color={colors.white}
-            //TODO Change disable toggle
-            isDisabled={false}
+            isDisabled={!flag}
             _disabled={{
               bgColor: "transparent",
               color: colors.main,
               border: "1px",
               borderColor: colors.main,
             }}
+            colorScheme="gray"
+            onClick={handleCreateResult}
           >
             Create
           </Button>

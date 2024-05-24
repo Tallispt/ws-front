@@ -6,14 +6,12 @@ async function detect(data, token) {
     {
       headers: { 'Authorization': `Bearer ${token}`, 
       'content-type': 'multipart/form-data' },
-      // responseType: 'stream'
     })
   return response.data
 }
 
-async function delDetect(data, token) {
-  const response = await api.delete('/data/detect',
-    data,
+async function delDetect(id, token) {
+  const response = await api.delete(`/data/detect/${id}`,
     {
       headers: { 'Authorization': `Bearer ${token}`}
     })
@@ -31,26 +29,15 @@ async function getData(id, token) {
   return response.data
 }
 
-async function getUserDatas(token) {
-  const response = await api.get(`/data`,
-    {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      }
-    })
-  return response.data
-}
-
-async function save(data, token) {
-  const response = await api.post('/data',
-    data,
-    {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      }
-    })
-  return response.data
-}
+// async function getUserDatas(token) {
+//   const response = await api.get(`/data`,
+//     {
+//       headers: {
+//         'Authorization': `Bearer ${token}`,
+//       }
+//     })
+//   return response.data
+// }
 
 async function update(id, data, token) {
   // const response = await api.put(`/data/${id}`,
@@ -63,22 +50,10 @@ async function update(id, data, token) {
   // return response.data
 }
 
-async function del(id, token) {
-  // const response = await api.delete(`/data/${id}`,
-  //   {
-  //     headers: {
-  //       'Authorization': `Bearer ${token}`,
-  //     }
-  //   })
-  // return response.data
-}
-
 export {
   detect,
   delDetect,
   getData,
-  getUserDatas,
-  save,
+  // getUserDatas,
   update,
-  del
 }

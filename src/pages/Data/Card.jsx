@@ -7,40 +7,52 @@ import {
   Image,
   Stack,
   Text,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { colors } from "../../style/color";
 import { Link } from "react-router-dom";
+import DeleteModal from "./DeleteModal";
 
-const CardContainer = () => {
+const CardContainer = ({ item }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Card
-      as={Link}
-      to={"/app/result"}
       maxW={"md"}
       direction={"row"}
       alignItems={"center"}
       cursor={"pointer"}
+      mb={"1rem"}
       _hover={{ border: "1px", borderColor: colors.gray400 }}
     >
-      <CardBody overflow={"hidden"} p={"1rem"}>
-        <HStack spacing={"2rem"}>
-          <Image
-            objectFit={"contain"}
-            src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-            alt="Chakra UI"
-            borderRadius={"lg"}
-            // minH={"100%"}
-            maxW={"100px"}
-            // maxH={"100%"}
+      <CardBody p={"1rem"}>
+        <HStack justifyContent={"space-between"}>
+          <HStack spacing={"4rem"} as={Link} to={`/app/result/${item._id}`}>
+            <Image
+              objectFit={"contain"}
+              src={item?.original_image}
+              alt="Chakra UI"
+              borderRadius={"lg"}
+              maxW={"100px"}
+            />
+            <Stack py="1rem">
+              <Heading size={"sm"}>{item?.name}</Heading>
+              <Text fontSize={"sm"}>{item?.location}</Text>
+              <Text fontSize={"sm"}>{item?.created_at}</Text>
+            </Stack>
+          </HStack>
+          <CloseButton
+            variant={"ghost"}
+            alignSelf={"flex-start"}
+            onClick={onOpen}
           />
-          <Stack py="1rem">
-            <Heading size={"sm"}>Analysis001</Heading>
-            <Text fontSize={"sm"}>Location</Text>
-            <Text fontSize={"sm"}>Date</Text>
-          </Stack>
-          <CloseButton variant={"ghost"} alignSelf={"flex-start"} />
         </HStack>
       </CardBody>
+      <DeleteModal
+        id={item?._id}
+        isOpen={isOpen}
+        onClose={onClose}
+        onOpen={onOpen}
+      />
     </Card>
   );
 };

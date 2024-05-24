@@ -8,24 +8,19 @@ import {
   Image,
   VStack,
 } from "@chakra-ui/react";
-import {
-  IoChevronBack,
-  IoEllipsisHorizontalSharp,
-  IoInformationCircleOutline,
-} from "react-icons/io5";
+import { IoChevronBack, IoEllipsisHorizontalSharp } from "react-icons/io5";
 import { colors } from "../../style/color";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AccordionContainer from "./AccodionComponent";
-
-const result = [
-  { color: "RGB" },
-  { color: "CMYK" },
-  { color: "HSV" },
-  { color: "E" },
-];
+import useResult from "../../hooks/api/useResult";
+import PopOverInfo from "./PopOverInfo";
+import Loading from "../../components/Loading";
 
 const ResultPage = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  const { resultData, resultLoading } = useResult(id);
 
   return (
     <VStack>
@@ -48,7 +43,7 @@ const ResultPage = () => {
           onClick={() => navigate("/app/data")}
         />
         <Heading fontSize={["xl", "2xl"]} textAlign={"center"} flex={1}>
-          Analysis001
+          {resultData?.name}
         </Heading>
         <IconButton
           as={IoEllipsisHorizontalSharp}
@@ -59,32 +54,37 @@ const ResultPage = () => {
         />
       </Flex>
 
-      <FormControl pt={"4.6rem"} pb={"1rem"}>
-        <Flex justifyContent={"flex-end"}>
-          <IconButton
-            size={"xs"}
-            as={IoInformationCircleOutline}
-            variant={"ghost"}
-            cursor={"pointer"}
-            justifySelf={"right"}
-          />
-        </Flex>
-        <Center>
-          <Image
-            objectFit={"contain"}
-            src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-            alt="Chakra UI"
-            borderRadius={"lg"}
-            maxW={"300px"}
-            mb={"2rem"}
-          />
+      {resultLoading ? (
+        <Center minw={"100vw"} minH={"100vh"}>
+          <Loading />
         </Center>
-        <Accordion allowMultiple>
-          {result.map((item, index) => (
-            <AccordionContainer index={index} color={item.color} />
-          ))}
-        </Accordion>
-      </FormControl>
+      ) : (
+        <FormControl pt={"4.6rem"} pb={"1rem"}>
+          <Flex justifyContent={"flex-end"}>
+            <PopOverInfo info={resultData?.info} />
+          </Flex>
+          <Center>
+            <Image
+              objectFit={"contain"}
+              src={resultData?.original_image}
+              alt="Chakra UI"
+              borderRadius={"lg"}
+              maxW={"300px"}
+              maxH={"200px"}
+              mb={"2rem"}
+            />
+          </Center>
+          <Accordion allowMultiple>
+            {resultData?.info.channels.map((item, index) => (
+              <AccordionContainer
+                key={index}
+                channel={item}
+                resultData={resultData?.result_data[item]}
+              />
+            ))}
+          </Accordion>
+        </FormControl>
+      )}
     </VStack>
   );
 };
