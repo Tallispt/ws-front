@@ -14,7 +14,6 @@ import {
 import { colors } from "../../style/color";
 import { IoEllipsisHorizontalSharp } from "react-icons/io5";
 import Table from "./Table";
-import PlotContainer from "./PlotContainer";
 
 const AccordionContainer = ({ channel, resultData }, ...props) => {
   return (
