@@ -34,6 +34,7 @@ export default function useAsync(handler, immediate = true) {
 
   return {
     data,
+    setData,
     loading,
     error,
     act

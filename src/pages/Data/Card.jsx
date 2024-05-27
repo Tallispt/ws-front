@@ -13,7 +13,7 @@ import { colors } from "../../style/color";
 import { Link } from "react-router-dom";
 import DeleteModal from "./DeleteModal";
 
-const CardContainer = ({ item }) => {
+const CardContainer = ({ item, setData }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Card
@@ -49,6 +49,7 @@ const CardContainer = ({ item }) => {
       </CardBody>
       <DeleteModal
         id={item?._id}
+        setData={setData}
         isOpen={isOpen}
         onClose={onClose}
         onOpen={onOpen}

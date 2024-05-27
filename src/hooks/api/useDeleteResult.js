@@ -4,17 +4,17 @@ import * as resultApi from '../../services/result';
 import useToken from '../useToken';
 
 
-export default function useDeleteResult(id) {
+export default function useDeleteResult() {
   const token = useToken()
 
   const {
     loading: resultLoading,
     error: resultError,
-    act: result
-  } = useAsync(() =>resultApi.delResult(id, token), false);
+    act: delResult
+  } = useAsync((id) =>resultApi.delResult(id, token), false);
 
   return {
     resultLoading,
     resultError,
-    result
+    delResult
   }};
