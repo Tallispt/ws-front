@@ -11,10 +11,18 @@ import {
 import useDeleteResult from "../../hooks/api/useDeleteResult";
 
 const DeleteModal = ({ ...props }) => {
-  const { result } = useDeleteResult(props.id);
+  const { delResult } = useDeleteResult();
+  //TODO
   const handleEndSession = () => {
-    result();
-    props.onClose();
+    try {
+      delResult(props.id);
+      props.setData((prevState) =>
+        prevState.filter((item) => item._id.$oid.toString() !== props.id)
+      );
+      props.onClose();
+    } catch (e) {
+      throw e;
+    }
   };
 
   return (

@@ -10,7 +10,7 @@ import NoDataContainer from "./NoDataContainer";
 import Loading from "../../components/Loading";
 
 const DataPage = () => {
-  const { transformedData: data, dataLoading } = useData();
+  const { transformedData: data, dataLoading, setData } = useData();
   return (
     <>
       <VStack h={"100vh"}>
@@ -21,10 +21,14 @@ const DataPage = () => {
           </Center>
         ) : (
           <>
-            {data ? (
+            {data?.length !== 0 ? (
               <FormControl pt={"4.6rem"} pb={"5rem"}>
                 {data?.reverse().map((item) => (
-                  <CardContainer key={item?._id} item={item} />
+                  <CardContainer
+                    key={item?._id}
+                    item={item}
+                    setData={setData}
+                  />
                 ))}
               </FormControl>
             ) : (

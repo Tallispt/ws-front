@@ -10,6 +10,7 @@ export default function useData() {
   const {
     data: dataObj,
     loading: dataLoading,
+    setData,
     error: dataError,
     act: data
   } = useAsync(() => resultApi.getUserResultData(token));
@@ -26,6 +27,7 @@ export default function useData() {
     transformedData,
     dataLoading,
     dataError,
-    data
+    data,
+    setData
   };
 }

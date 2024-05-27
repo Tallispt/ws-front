@@ -38,7 +38,7 @@ const SideMenu = ({ ...props }) => {
   const { userData } = useContext(UserContext);
 
   return (
-    <Drawer isOpen={props.isOpen} onClose={props.onClose} size={"full"}>
+    <Drawer isOpen={props.isOpen} onClose={props.onClose} size={"lg"}>
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton size={"lg"} color={colors.main} />
