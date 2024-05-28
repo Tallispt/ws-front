@@ -38,7 +38,7 @@ const SideMenu = ({ ...props }) => {
   const { userData } = useContext(UserContext);
 
   return (
-    <Drawer isOpen={props.isOpen} onClose={props.onClose} size={"lg"}>
+    <Drawer isOpen={props.isOpen} onClose={props.onClose} size={"md"}>
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton size={"lg"} color={colors.main} />
@@ -77,7 +77,7 @@ const SideMenu = ({ ...props }) => {
             ))}
           </VStack>
         </DrawerBody>
-        <DrawerFooter justifyContent={"center"}>
+        <DrawerFooter justifyContent={"center"} h={"20rem"}>
           <Button size={["md", "lg"]} onClick={props.alertOnOpen}>
             Exit account
           </Button>
