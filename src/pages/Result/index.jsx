@@ -79,6 +79,7 @@ const ResultPage = () => {
               <AccordionContainer
                 key={index}
                 channel={item}
+                xLabel={resultData?.info.xLabel}
                 resultData={resultData?.result_data[item]}
               />
             ))}

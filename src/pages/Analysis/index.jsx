@@ -314,8 +314,8 @@ const AnalysisPage = () => {
             </h2>
             <AccordionPanel pb={4}>
               <Box pb={4}>
-                <FormLabel fontWeight={"bold"}>Channel</FormLabel>
-                <Flex justifyContent={"space-between"}>
+                <FormLabel fontWeight={"bold"}>Color Models</FormLabel>
+                <Box display={"grid"} gridTemplateColumns={"repeat(3, 1fr)"}>
                   {channelCheckbox.map((item, index) => (
                     <Checkbox
                       key={index}
@@ -345,7 +345,7 @@ const AnalysisPage = () => {
                       {item.name}
                     </Checkbox>
                   ))}
-                </Flex>
+                </Box>
               </Box>
               <Box pb={4}>
                 <FormLabel fontWeight={"bold"}>Color Extraction Mode</FormLabel>

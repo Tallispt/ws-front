@@ -14,8 +14,9 @@ import {
 import { colors } from "../../style/color";
 import { IoEllipsisHorizontalSharp } from "react-icons/io5";
 import Table from "./Table";
+import PlotContainer from "./PlotContainer";
 
-const AccordionContainer = ({ channel, resultData }, ...props) => {
+const AccordionContainer = ({ channel, resultData, xLabel }, ...props) => {
   return (
     <AccordionItem border={"none"}>
       <h2>
@@ -89,6 +90,12 @@ const AccordionContainer = ({ channel, resultData }, ...props) => {
               <Table tableValues={resultData?.means} />
             </TabPanel>
             <TabPanel>
+              <PlotContainer
+                meanValues={resultData?.plot_means}
+                regressionValues={resultData?.plot_regressions}
+                channel={channel}
+                xLabel={xLabel}
+              />
               <Table tableValues={resultData?.regressions} />
             </TabPanel>
           </TabPanels>
